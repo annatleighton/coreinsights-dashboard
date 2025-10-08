@@ -6,13 +6,17 @@ from datetime import datetime
 # Page configuration
 st.set_page_config(
     page_title="CoreInsights",
-    page_icon="🎯",
     layout="wide"
 )
 
-# API Keys (in production, use st.secrets or environment variables)
-TWELVE_DATA_API_KEY = "669aa5408f794ee09a609da9b11a82e0"
-NEWS_API_KEY = "642f006c86ec41f8958c599de26a7b26"
+# API Keys - Use Streamlit secrets in production, fallback to hardcoded for local development
+try:
+    TWELVE_DATA_API_KEY = st.secrets["TWELVE_DATA_API_KEY"]
+    NEWS_API_KEY = st.secrets["NEWS_API_KEY"]
+except:
+    # Fallback for local development
+    TWELVE_DATA_API_KEY = "669aa5408f794ee09a609da9b11a82e0"
+    NEWS_API_KEY = "642f006c86ec41f8958c599de26a7b26"
 
 def fetch_stock_quote(ticker):
     url = f"https://api.twelvedata.com/quote?symbol={ticker}"
@@ -137,7 +141,7 @@ with st.sidebar:
     
     max_news = st.slider("Number of News Articles", 3, 10, 5)
     
-    search_button = st.button("Generate Report", type="primary", use_container_width=True)
+    search_button = st.button("🚀 Generate Report", type="primary", use_container_width=True)
     
     # Add a reset button if a report has been generated
     if 'report_generated' in st.session_state and st.session_state.report_generated:

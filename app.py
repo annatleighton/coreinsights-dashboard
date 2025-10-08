@@ -141,7 +141,7 @@ with st.sidebar:
     
     max_news = st.slider("Number of News Articles", 3, 10, 5)
     
-    search_button = st.button("🚀 Generate Report", type="primary", use_container_width=True)
+    search_button = st.button("Generate Report", type="primary", use_container_width=True)
     
     # Add a reset button if a report has been generated
     if 'report_generated' in st.session_state and st.session_state.report_generated:

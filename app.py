@@ -13,7 +13,6 @@ st.set_page_config(
 try:
     TWELVE_DATA_API_KEY = st.secrets["TWELVE_DATA_API_KEY"]
     NEWS_API_KEY = st.secrets["NEWS_API_KEY"]
-
 def fetch_stock_quote(ticker):
     url = f"https://api.twelvedata.com/quote?symbol={ticker}"
     headers = {"Authorization": f"apikey {TWELVE_DATA_API_KEY}"}

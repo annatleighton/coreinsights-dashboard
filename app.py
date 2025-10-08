@@ -3,16 +3,18 @@ import requests
 import json
 from datetime import datetime
 
-# Page configuration
 st.set_page_config(
     page_title="CoreInsights",
     layout="wide"
 )
 
-# API Keys - Use Streamlit secrets in production, fallback to hardcoded for local development
 try:
     TWELVE_DATA_API_KEY = st.secrets["TWELVE_DATA_API_KEY"]
     NEWS_API_KEY = st.secrets["NEWS_API_KEY"]
+except:
+    TWELVE_DATA_API_KEY = "669aa5408f794ee09a609da9b11a82e0"
+    NEWS_API_KEY = "642f006c86ec41f8958c599de26a7b26"
+
 def fetch_stock_quote(ticker):
     url = f"https://api.twelvedata.com/quote?symbol={ticker}"
     headers = {"Authorization": f"apikey {TWELVE_DATA_API_KEY}"}
@@ -89,21 +91,17 @@ def fetch_wikipedia_info(wiki_page_name):
     except Exception as e:
         return None
 
-# Main UI
 st.title("CoreInsights")
 st.markdown("---")
 
-# Sidebar for input
 with st.sidebar:
     st.header("🔍 Search Parameters")
     
-    # Preset companies
     preset = st.selectbox(
         "Quick Select",
         ["Custom", "Tesla", "Apple", "Microsoft", "Amazon", "Google"]
     )
     
-    # Set default values based on preset
     if preset == "Tesla":
         default_ticker = "TSLA"
         default_company = "Tesla"
@@ -129,7 +127,6 @@ with st.sidebar:
         default_company = "Tesla"
         default_wiki = "Tesla,_Inc."
     
-    # Always show input fields with preset values
     ticker = st.text_input("Stock Ticker", default_ticker).upper()
     company_name = st.text_input("Company Name", default_company)
     wiki_name = st.text_input("Wikipedia Page Name", default_wiki)
@@ -138,17 +135,14 @@ with st.sidebar:
     
     search_button = st.button("Generate Report", type="primary", use_container_width=True)
     
-    # Add a reset button if a report has been generated
     if 'report_generated' in st.session_state and st.session_state.report_generated:
         if st.button("🔄 New Search", use_container_width=True):
             st.session_state.report_generated = False
             st.rerun()
 
-# Main content area
 if search_button:
     st.session_state.report_generated = True
     with st.spinner(f"Fetching data for {company_name}..."):
-        # Fetch all data
         stock_data = fetch_stock_quote(ticker)
         news_articles = fetch_news(company_name, max_news)
         wiki_data = fetch_wikipedia_info(wiki_name)
@@ -156,7 +150,6 @@ if search_button:
         if not stock_data:
             st.error("❌ Failed to fetch stock data. Please check the ticker symbol.")
         else:
-            # Company Overview Section
             st.header("🏢 Company Overview")
             col1, col2, col3 = st.columns(3)
             
@@ -175,7 +168,6 @@ if search_button:
             
             st.markdown("---")
             
-            # Stock Performance Section
             st.header("📊 Stock Performance")
             
             col1, col2, col3, col4 = st.columns(4)
@@ -196,7 +188,6 @@ if search_button:
             with col4:
                 st.metric("Volume", f"{stock_data['volume']:,}")
             
-            # Additional stock info
             col1, col2 = st.columns(2)
             with col1:
                 st.metric("Previous Close", f"${stock_data['previous_close']:.2f}")
@@ -206,7 +197,6 @@ if search_button:
             
             st.markdown("---")
             
-            # News Section
             st.header("📰 Recent News")
             
             if news_articles:
@@ -223,7 +213,6 @@ if search_button:
             
             st.markdown("---")
             
-            # Download Report
             st.header("💾 Export Report")
             
             report = {
@@ -253,7 +242,6 @@ if search_button:
                 st.info(f"Report generated at: {report['generated_at']}")
 
 else:
-    # Welcome screen
     st.info("👈 Select a company from the sidebar or enter custom details, then click 'Generate Report'")
     
     col1, col2, col3 = st.columns(3)
@@ -270,6 +258,5 @@ else:
         st.markdown("### 📚 Company Info")
         st.write("Background information from Wikipedia")
 
-# Footer
 st.markdown("---")
 st.caption("Data sources: Twelve Data API, NewsAPI, Wikipedia API")

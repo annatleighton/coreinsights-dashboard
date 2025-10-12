@@ -355,7 +355,7 @@ if search_button:
                 col1, col2 = st.columns(2)
                 with col1:
                     st.download_button(
-                        label="📥 Download JSON Report",
+                        label="📥 Download Report",
                         data=report_json,
                         file_name=f"{ticker or company_name.replace(' ', '_')}_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
                         mime="application/json"
